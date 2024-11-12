@@ -17,6 +17,20 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+
+
 
 val LightPurple = Color(0xFFE4D7FF)
 val LightGreen = Color(0xFFDFFFD7)
@@ -42,7 +56,7 @@ fun MainScreen() {
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(Color.Gray, Color.Red)
+                    colors = listOf(Color.Gray, Color.Blue)
                 )
             )
     ) {
@@ -160,6 +174,17 @@ fun LoginScreen(
         }
     }
 }
+// Modèle Product avec un champ description
+
+
+// Liste des produits avec descriptions
+val productList = listOf(
+    Product("Laptop1", "$1200", R.drawable.laptop, "High-performance laptop with 16GB RAM and 512GB SSD."),
+    Product("Laptop2", "$800", R.drawable.laptop, "Affordable laptop suitable for daily tasks and browsing."),
+    Product("Laptop3", "$200", R.drawable.laptop, "Basic laptop ideal for students and light use."),
+    Product("Laptop4", "$1200", R.drawable.laptop, "Powerful laptop for professionals with dedicated GPU."),
+    Product("Laptop5", "$1200", R.drawable.laptop, "Gaming laptop with high refresh rate display.")
+)
 
 @Composable
 fun HomeScreen(onLogoutClick: () -> Unit) {
@@ -167,10 +192,24 @@ fun HomeScreen(onLogoutClick: () -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.Start
     ) {
-        Text("Welcome to Home", fontSize = 24.sp, color = Color.White)
+        Text(
+            text = "Welcome to Home",
+            fontSize = 24.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+        ) {
+            items(productList) { product ->
+                ProductCard(product)  // Afficher le produit avec sa description
+            }
+        }
 
         Button(
             onClick = onLogoutClick,
@@ -183,6 +222,54 @@ fun HomeScreen(onLogoutClick: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun ProductCard(product: Product) {
+    Card(
+        modifier = Modifier
+            .width(500.dp)
+            .padding(vertical = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = LightGreen),
+        elevation = CardDefaults.cardElevation(8.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Image(
+                painter = painterResource(id = product.imageRes),
+                contentDescription = product.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(RoundedCornerShape(8.dp))
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = product.name,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+            Text(
+                text = product.price,
+                fontSize = 18.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = 2.dp)
+            )
+            Text(
+                text = product.description,
+                fontSize = 16.sp,
+                color = Color.DarkGray,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
+}
+
 
 @Composable
 fun ResetPasswordScreen(onBackClick: () -> Unit) {
